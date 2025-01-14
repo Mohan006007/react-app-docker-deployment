@@ -3,12 +3,16 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
+        GIT_CREDENTIALS = credentials('git-credentials')
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                script {
+                    // Use git credentials to clone the repository
+                    git credentialsId: 'git-credentials', url: 'https://github.com/Mohan006007/react-app-docker-deployment.git'
+                }
             }
         }
 
