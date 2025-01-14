@@ -31,7 +31,10 @@ pipeline {
             steps {
                 script {
                     // Push Docker image to the dev repo (public)
-                    sh 'docker push mohan006007/dev:dev'
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                        sh 'docker push mohan006007/dev:dev'
+                    }
                 }
             }
         }
@@ -43,7 +46,10 @@ pipeline {
             steps {
                 script {
                     // Push Docker image to the prod repo (private)
-                    sh 'docker push mohan006007/prod:latest'
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                        sh 'docker push mohan006007/prod:latest'
+                    }
                 }
             }
         }
@@ -55,5 +61,3 @@ pipeline {
         }
     }
 }
-
->
