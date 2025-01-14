@@ -2,16 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
-        GIT_CREDENTIALS = credentials('git-credentials')
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials') // Add your Docker credentials here
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                script {
-                    checkout scm
-                }
+                checkout scm
             }
         }
 
@@ -21,7 +18,8 @@ pipeline {
             }
             steps {
                 script {
-                    docker.build("mohan006007/dev-repo:dev")
+                    // Build Docker image for dev
+                    sh 'docker build -t mohan006007/dev:dev .'
                 }
             }
         }
@@ -32,9 +30,8 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
-                        docker.image("mohan006007/dev-repo:dev").push()
-                    }
+                    // Push Docker image to the dev repo (public)
+                    sh 'docker push mohan006007/dev:dev'
                 }
             }
         }
@@ -45,18 +42,18 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
-                        docker.image("mohan006007/dev-repo:prod").push()
-                    }
+                    // Push Docker image to the prod repo (private)
+                    sh 'docker push mohan006007/prod:latest'
                 }
             }
         }
 
         stage('Cleanup') {
             steps {
-                cleanWs()
+                cleanWs()  // Clean workspace
             }
         }
     }
 }
 
+>
