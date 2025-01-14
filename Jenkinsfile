@@ -20,8 +20,9 @@ pipeline {
                 script {
                     def branch = env.GIT_BRANCH.replaceAll('origin/', '')
                     def tag = branch == 'dev' ? 'dev' : 'prod'
+                    def repo = branch == 'dev' ? DOCKER_REPO_DEV : DOCKER_REPO_PROD
                     sh """
-                        docker build -t ${DOCKER_REPO_DEV}:${tag} .
+                        docker build -t ${repo}:${tag} .
                     """
                 }
             }
@@ -77,4 +78,3 @@ pipeline {
         }
     }
 }
-
