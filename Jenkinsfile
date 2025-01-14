@@ -19,7 +19,9 @@ pipeline {
             steps {
                 script {
                     // Build Docker image for dev
-                    sh 'docker build -t mohan006007/dev:dev .'
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'docker build -t mohan006007/dev:dev .'
+                    }
                 }
             }
         }
