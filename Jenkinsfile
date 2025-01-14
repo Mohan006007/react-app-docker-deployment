@@ -10,7 +10,8 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 script {
-                    git credentialsId: 'git-credentials', url: 'https://github.com/Mohan006007/react-app-docker-deployment.git'
+                    // Ensure the block is treated as a closure
+                    checkout scm
                 }
             }
         }
@@ -18,6 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Docker build step
                     docker.build("mohan006007/dev-repo:dev")
                 }
             }
@@ -29,6 +31,7 @@ pipeline {
             }
             steps {
                 script {
+                    // Pushing to Docker Hub - Dev
                     docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
                         docker.image("mohan006007/dev-repo:dev").push()
                     }
@@ -42,6 +45,7 @@ pipeline {
             }
             steps {
                 script {
+                    // Pushing to Docker Hub - Prod
                     docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
                         docker.image("mohan006007/dev-repo:prod").push()
                     }
@@ -55,7 +59,7 @@ pipeline {
             }
             steps {
                 script {
-                    // Add your production deployment logic here
+                    // Production deployment logic (add as needed)
                 }
             }
         }
