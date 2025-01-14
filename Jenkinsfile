@@ -53,17 +53,6 @@ pipeline {
             }
         }
 
-        stage('Deploy to Prod') {
-            when {
-                branch 'master'
-            }
-            steps {
-                script {
-                    // Production deployment logic (add as needed)
-                }
-            }
-        }
-
         stage('Cleanup') {
             steps {
                 cleanWs()
