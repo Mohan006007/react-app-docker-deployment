@@ -2,25 +2,24 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
-        GIT_CREDENTIALS = credentials('git-credentials')
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials') // Add your Docker credentials here
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                script {
-                    // Ensure the block is treated as a closure
-                    checkout scm
-                }
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
+            when {
+                branch 'dev'
+            }
             steps {
                 script {
-                    // Docker build step
-                    docker.build("mohan006007/dev-repo:dev")
+                    // Build Docker image for dev
+                    sh 'docker build -t mohan006007/dev:dev .'
                 }
             }
         }
@@ -31,10 +30,8 @@ pipeline {
             }
             steps {
                 script {
-                    // Pushing to Docker Hub - Dev
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
-                        docker.image("mohan006007/dev-repo:dev").push()
-                    }
+                    // Push Docker image to the dev repo (public)
+                    sh 'docker push mohan006007/dev:dev'
                 }
             }
         }
@@ -45,19 +42,18 @@ pipeline {
             }
             steps {
                 script {
-                    // Pushing to Docker Hub - Prod
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
-                        docker.image("mohan006007/dev-repo:prod").push()
-                    }
+                    // Push Docker image to the prod repo (private)
+                    sh 'docker push mohan006007/prod:latest'
                 }
             }
         }
 
         stage('Cleanup') {
             steps {
-                cleanWs()
+                cleanWs()  // Clean workspace
             }
         }
     }
 }
 
+>
