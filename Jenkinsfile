@@ -10,7 +10,6 @@ pipeline {
         stage('Checkout SCM') {
             steps {
                 script {
-                    // Use git credentials to clone the repository
                     git credentialsId: 'git-credentials', url: 'https://github.com/Mohan006007/react-app-docker-deployment.git'
                 }
             }
@@ -55,11 +54,13 @@ pipeline {
                 branch 'master'
             }
             steps {
-                // Deployment logic for production
+                script {
+                    // Deployment logic for production
+                }
             }
         }
 
-        stage('Declarative: Post Actions') {
+        stage('Cleanup') {
             steps {
                 cleanWs()
             }
