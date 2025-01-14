@@ -2,27 +2,20 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = 'docker-hub-credentials'
-        GIT_CREDENTIALS = 'git-credentials'
-        DOCKER_REPO_DEV = 'mohan006007/dev-repo'
-        DOCKER_REPO_PROD = 'mohan006007/prod-repo'
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/Mohan006007/react-app-docker-deployment.git'
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    def branch = env.GIT_BRANCH.replaceAll('origin/', '')
-                    def tag = branch == 'dev' ? 'dev' : 'prod'
-                    sh """
-                        docker build -t ${DOCKER_REPO_DEV}:${tag} .
-                    """
+                    docker.build("mohan006007/dev-repo:dev")
                 }
             }
         }
@@ -33,11 +26,8 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh """
-                            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                            docker push ${DOCKER_REPO_DEV}:dev
-                        """
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
+                        docker.image("mohan006007/dev-repo:dev").push()
                     }
                 }
             }
@@ -49,11 +39,8 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh """
-                            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                            docker push ${DOCKER_REPO_PROD}:prod
-                        """
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
+                        docker.image("mohan006007/dev-repo:prod").push()
                     }
                 }
             }
@@ -64,16 +51,14 @@ pipeline {
                 branch 'master'
             }
             steps {
-                script {
-                    sh './deploy.sh'
-                }
+                // Deployment logic for production
             }
         }
-    }
 
-    post {
-        always {
-            cleanWs()
+        stage('Declarative: Post Actions') {
+            steps {
+                cleanWs()
+            }
         }
     }
 }
