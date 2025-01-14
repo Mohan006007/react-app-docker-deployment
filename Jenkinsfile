@@ -2,28 +2,23 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = 'docker-hub-credentials'
-        GIT_CREDENTIALS = 'git-credentials'
-        DOCKER_REPO_DEV = 'mohan006007/dev-repo'
-        DOCKER_REPO_PROD = 'mohan006007/prod-repo'
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                git credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/Mohan006007/react-app-docker-deployment.git'
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
+            when {
+                branch 'dev'
+            }
             steps {
                 script {
-                    def branch = env.GIT_BRANCH.replaceAll('origin/', '')
-                    def tag = branch == 'dev' ? 'dev' : 'prod'
-                    def repo = branch == 'dev' ? DOCKER_REPO_DEV : DOCKER_REPO_PROD
-                    sh """
-                        docker build -t ${repo}:${tag} .
-                    """
+                    sh 'docker build -t mohan006007/dev:dev .'
                 }
             }
         }
@@ -34,12 +29,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh """
-                            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                            docker push ${DOCKER_REPO_DEV}:dev
-                        """
-                    }
+                    sh 'docker push mohan006007/dev:dev'
                 }
             }
         }
@@ -50,31 +40,16 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh """
-                            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                            docker push ${DOCKER_REPO_PROD}:prod
-                        """
-                    }
+                    sh 'docker push mohan006007/prod:latest'
                 }
             }
         }
 
-        stage('Deploy to Prod') {
-            when {
-                branch 'master'
-            }
+        stage('Cleanup') {
             steps {
-                script {
-                    sh './deploy.sh'
-                }
+                cleanWs()
             }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
+
