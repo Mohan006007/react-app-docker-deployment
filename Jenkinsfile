@@ -3,12 +3,15 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS = credentials('dockerhub-credentials')
+        GIT_CREDENTIALS = credentials('git-credentials')
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                script {
+                    checkout scm
+                }
             }
         }
 
@@ -18,7 +21,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker build -t mohan006007/dev:dev .'
+                    docker.build("mohan006007/dev-repo:dev")
                 }
             }
         }
@@ -29,7 +32,9 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker push mohan006007/dev:dev'
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
+                        docker.image("mohan006007/dev-repo:dev").push()
+                    }
                 }
             }
         }
@@ -40,7 +45,9 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker push mohan006007/prod:latest'
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_CREDENTIALS) {
+                        docker.image("mohan006007/dev-repo:prod").push()
+                    }
                 }
             }
         }
