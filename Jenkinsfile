@@ -8,10 +8,17 @@ pipeline {
                     userRemoteConfigs: [[url: 'https://github.com/Mohan006007/react-app-docker-deployment.git', credentialsId: 'github-credentials']]])
             }
         }
-        stage('Build Docker Image') {
+        stage('Debug Workspace') {
+            steps {
+                sh 'ls -la'
+            }
+        }
+        stage('Build and Run Docker Containers') {
             steps {
                 script {
-                    docker.build("your-dockerhub-username/dev-image:latest")
+                    sh 'docker-compose down' // Stop and clean up if already running
+                    sh 'docker-compose build'
+                    sh 'docker-compose up -d'
                 }
             }
         }
@@ -19,7 +26,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                        docker.image("your-dockerhub-username/dev-image:latest").push()
+                        sh 'docker-compose push'
                     }
                 }
             }
@@ -28,7 +35,11 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Directly use cleanWs in the post section
+            cleanWs() // Cleanup workspace
+            script {
+                sh 'docker-compose down' // Ensure containers are stopped
+            }
         }
     }
 }
+
