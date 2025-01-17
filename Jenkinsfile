@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         dockerImage = ''
-        registry = 'mohan006007/dev'
+        registry = 'mohan006007/prod'
         registryCredential = 'dockerhub-credentials'
     }
 
