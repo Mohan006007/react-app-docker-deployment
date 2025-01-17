@@ -16,9 +16,17 @@ pipeline {
         stage('Build and Run Docker Containers') {
             steps {
                 script {
-                    sh 'docker-compose down' // Stop and clean up if already running
+                    // Clean up previous containers, if any
+                    sh 'docker-compose down'
+
+                    // Build the Docker images
                     sh 'docker-compose build'
+
+                    // Start the containers in detached mode
                     sh 'docker-compose up -d'
+
+                    // Optional: View logs (helpful for debugging)
+                    sh 'docker-compose logs'
                 }
             }
         }
@@ -37,7 +45,8 @@ pipeline {
         always {
             cleanWs() // Cleanup workspace
             script {
-                sh 'docker-compose down' // Ensure containers are stopped
+                // Ensure containers are stopped
+                sh 'docker-compose down'
             }
         }
     }
