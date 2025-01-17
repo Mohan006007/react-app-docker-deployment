@@ -8,33 +8,30 @@ pipeline {
                     userRemoteConfigs: [[url: 'https://github.com/Mohan006007/react-app-docker-deployment.git', credentialsId: 'github-credentials']]])
             }
         }
+
         stage('Debug Workspace') {
             steps {
-                sh 'ls -la'
+                sh 'ls -la' // List files in workspace to debug
             }
         }
+
         stage('Build and Run Docker Containers') {
             steps {
                 script {
-                    // Clean up previous containers, if any
-                    sh 'docker-compose down'
-
-                    // Build the Docker images
-                    sh 'docker-compose build'
-
-                    // Start the containers in detached mode
-                    sh 'docker-compose up -d'
-
-                    // Optional: View logs (helpful for debugging)
-                    sh 'docker-compose logs'
+                    // Clean up any previous containers
+                    sh 'docker-compose down || true' // Using `|| true` to ignore errors if containers are not found
+                    sh 'docker-compose build' // Build the Docker image
+                    sh 'docker-compose up -d' // Run containers in detached mode
                 }
             }
         }
+
         stage('Push Docker Image to Dev') {
             steps {
                 script {
+                    // Push the built Docker image to Docker Hub
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                        sh 'docker-compose push'
+                        sh 'docker-compose push' // Push Docker images to Docker Hub
                     }
                 }
             }
@@ -43,10 +40,10 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Cleanup workspace
+            // Cleanup the workspace and stop containers
+            cleanWs() 
             script {
-                // Ensure containers are stopped
-                sh 'docker-compose down'
+                sh 'docker-compose down || true' // Ensure containers are stopped and cleaned up
             }
         }
     }
