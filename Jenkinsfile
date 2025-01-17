@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         dockerImage = ''
-        registry = 'mohan006007/react-app-docker-deployment'
+        registry = 'mohan006007/dev'
         registryCredential = 'dockerhub-credentials'
     }
 
@@ -31,7 +31,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             cleanWs()
