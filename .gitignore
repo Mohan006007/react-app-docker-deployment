@@ -13,5 +13,4 @@ dist/
 
 # Docker files
 .dockerignore
-Dockerfile
-docker-compose.yml
+!docker-compose.yml
