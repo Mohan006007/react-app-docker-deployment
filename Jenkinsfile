@@ -28,10 +28,7 @@ pipeline {
 
     post {
         always {
-            node {
-                cleanWs()
-            }
+            cleanWs() // Directly use cleanWs in the post section
         }
     }
 }
-
