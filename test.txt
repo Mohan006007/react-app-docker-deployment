@@ -1,0 +1,1 @@
+This is an code push trigger to run CI/CD from dev branch and after merge to master image should be build and pushed to prod private repo
