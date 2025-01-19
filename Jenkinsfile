@@ -2,39 +2,71 @@ pipeline {
     agent any
 
     environment {
-        dockerImage = ''
-        registry = 'mohan006007/prod'
-        registryCredential = 'dockerhub-credentials'
+        DOCKER_PROD_REPO = 'mohan006007/prod'
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+        GIT_CREDENTIALS_ID = 'git-credentials'
+        GIT_REPO_URL = 'https://github.com/Mohan006007/react-app-docker-deployment.git'
+        BRANCH_NAME = 'master'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Mohan006007/react-app-docker-deployment.git']])
-            }
-        }
-
-        stage('Build Docker image') {
+        stage('Checkout Code') {
             steps {
                 script {
-                    dockerImage = docker.build registry
+                    checkout([ 
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${BRANCH_NAME}"]],
+                        userRemoteConfigs: [[
+                            url: "${GIT_REPO_URL}",
+                            credentialsId: "${GIT_CREDENTIALS_ID}"
+                        ]]]
+                    )
                 }
             }
         }
-        stage ('Push Docker image') {
+
+        stage('Build Docker Images') {
             steps {
                 script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push 'latest'
+                    sh './build.sh'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    def dockerRepo = DOCKER_PROD_REPO
+                    def buildTag = "${dockerRepo}:${env.BUILD_NUMBER}"
+                    sh "docker build -t ${buildTag} ."
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
                     }
+                    sh "docker push ${buildTag}"
+                }
+            }
+        }
+
+        stage('Deploy Docker Containers') {
+            steps {
+                script {
+                    def buildTag = "${DOCKER_PROD_REPO}:${env.BUILD_NUMBER}"
+                    sh "docker pull ${buildTag}"
+                    sh './deploy.sh'
                 }
             }
         }
     }
 
     post {
-        always {
-            cleanWs()
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline execution failed.'
         }
     }
 }
