@@ -5,8 +5,13 @@ This project demonstrates a complete **CI/CD pipeline** for deploying a **React 
 
 ---
 
-## Live Application  
-Access the live application here: [React App - Live Deployment](http://65.2.123.191:80).
+## **Live Application**
+
+You can explore the live deployment of the React application at the following URL:
+
+[**React App - Live Deployment**](http://65.2.123.191:80)
+
+Feel free to access and interact with the application in its fully deployed and functional state.
 
 ---
 
