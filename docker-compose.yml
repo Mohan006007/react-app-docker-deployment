@@ -2,13 +2,9 @@ version: '3'
 
 services:
   web:
-    image: mohan006007/dev-image:latest
-    build: .
+    image: ${DOCKER_PROD_REPO}:${BUILD_NUMBER}
     ports:
-      - "80:80"
-    volumes:
-      - .:/app
+      - "8085:80"
     environment:
       - NODE_ENV=production
     command: ["npm", "start"]
-
