@@ -1,13 +1,11 @@
 #!/bin/bash
 
-echo "Starting Docker containers"
-docker-compose down
-docker-compose up -d
+echo "Building Docker images"
+docker-compose build
 
 if [ $? -eq 0 ]; then
-    echo "Docker containers started successfully"
+    echo "Docker images built successfully"
 else
-    echo "Docker containers failed to start"
-    docker-compose logs
+    echo "Docker images build failed"
     exit 1
 fi
