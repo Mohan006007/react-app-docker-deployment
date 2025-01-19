@@ -61,6 +61,7 @@ Ensure the following are installed or configured:
   - `dev` branch for development.
   - `master` branch for production.
 - Includes `.gitignore` and `.dockerignore` to streamline version control.
+- Merge Strategy: `.gitattributes` in the master branch ensures files like Jenkinsfile, Dockerfile, etc., are preserved during merges from dev.
 
 ### 4. **CI/CD with Jenkins**
 - Automated build and deployment processes:
