@@ -40,7 +40,7 @@ Ensure the following are installed or configured:
    npm install
 3. Start the application locally
    ```bash
-   sudo PORT=80 npm start
+   npm start
 4. Access the application at `http://localhost:80`     
    
 ## Features
