@@ -1,0 +1,204 @@
+Branch indexing
+Connecting to https://api.github.com using Mohan006007/******
+GitHub throttling is disabled, which is not allowed for public GitHub usage, so ThrottleOnOver will be used instead. To configure a different rate limiting strategy, go to "GitHub API usage" under "Configure System" in the Jenkins settings.
+Obtained Jenkinsfile from dfab509fd19711994d583b9bbf5d450ae00068a4
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/tapp-multibranch-pipeline_master
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential git-credentials
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/tapp-multibranch-pipeline_master/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Mohan006007/react-app-docker-deployment.git # timeout=10
+Fetching without tags
+Fetching upstream changes from https://github.com/Mohan006007/react-app-docker-deployment.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+using GIT_ASKPASS to set credentials 
+ > git fetch --no-tags --force --progress -- https://github.com/Mohan006007/react-app-docker-deployment.git +refs/heads/master:refs/remotes/origin/master # timeout=10
+Checking out Revision dfab509fd19711994d583b9bbf5d450ae00068a4 (master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f dfab509fd19711994d583b9bbf5d450ae00068a4 # timeout=10
+Commit message: "Update Dockerfile"
+ > git rev-list --no-walk ab35cfab9cc30b843735341c2f9241e6d9c95b8d # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout Code)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential git-credentials
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/tapp-multibranch-pipeline_master/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Mohan006007/react-app-docker-deployment.git # timeout=10
+Fetching upstream changes from https://github.com/Mohan006007/react-app-docker-deployment.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/Mohan006007/react-app-docker-deployment.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision dfab509fd19711994d583b9bbf5d450ae00068a4 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f dfab509fd19711994d583b9bbf5d450ae00068a4 # timeout=10
+Commit message: "Update Dockerfile"
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Images)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ ./build.sh
+Building Docker images
+web uses an image, skipping
+Docker images built successfully
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push Docker Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker build -t mohan006007/prod:4 .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   8.14MB
+Step 1/7 : FROM node:18
+ ---> e3d72aca4924
+Step 2/7 : WORKDIR /app
+ ---> Using cache
+ ---> 7707df49eb2b
+Step 3/7 : COPY package.json package-lock.json ./
+ ---> Using cache
+ ---> 984c8be8db9c
+Step 4/7 : RUN npm install
+ ---> Using cache
+ ---> db8adb38bff3
+Step 5/7 : COPY . .
+ ---> c1c68a6bf973
+Step 6/7 : EXPOSE 80
+ ---> Running in 9b98bf8d5647
+ ---> Removed intermediate container 9b98bf8d5647
+ ---> 8114cec16a9b
+Step 7/7 : CMD ["npm", "start"]
+ ---> Running in 3e7a55ad1fd8
+ ---> Removed intermediate container 3e7a55ad1fd8
+ ---> 79fd79ec316a
+Successfully built 79fd79ec316a
+Successfully tagged mohan006007/prod:4
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKER_PASS
+[Pipeline] {
+[Pipeline] sh
+Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+		 Affected argument(s) used the following variable(s): [DOCKER_PASS]
+		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
++ docker login -u mohan006007 --password-stdin
++ echo ****
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] sh
++ docker push mohan006007/prod:4
+The push refers to repository [docker.io/mohan006007/prod]
+c6956caecf2b: Preparing
+7a44646cd248: Preparing
+cf6bf3a2d791: Preparing
+ff8fe64750d3: Preparing
+40689c24a66a: Preparing
+fef83a3a8b40: Preparing
+57edb89ea088: Preparing
+6edb22a949de: Preparing
+6d58389117c3: Preparing
+85c6f0cfb532: Preparing
+a4fd1e7df47e: Preparing
+2f7b6d216a37: Preparing
+57edb89ea088: Waiting
+6edb22a949de: Waiting
+6d58389117c3: Waiting
+85c6f0cfb532: Waiting
+a4fd1e7df47e: Waiting
+2f7b6d216a37: Waiting
+fef83a3a8b40: Waiting
+ff8fe64750d3: Layer already exists
+40689c24a66a: Layer already exists
+cf6bf3a2d791: Layer already exists
+7a44646cd248: Layer already exists
+57edb89ea088: Layer already exists
+6d58389117c3: Layer already exists
+6edb22a949de: Layer already exists
+fef83a3a8b40: Layer already exists
+85c6f0cfb532: Layer already exists
+a4fd1e7df47e: Layer already exists
+2f7b6d216a37: Layer already exists
+c6956caecf2b: Pushed
+4: digest: sha256:cbb82c95aae9e3d859898df4b8272fbc4af15ebe9daddbb54993aa1043eabade size: 2840
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Docker Containers)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ docker pull mohan006007/prod:4
+4: Pulling from mohan006007/prod
+Digest: sha256:cbb82c95aae9e3d859898df4b8272fbc4af15ebe9daddbb54993aa1043eabade
+Status: Image is up to date for mohan006007/prod:4
+docker.io/mohan006007/prod:4
+[Pipeline] sh
++ ./deploy.sh
+Starting Docker containers
+Stopping tapp-multibranch-pipeline_master_web_1 ... 
+Stopping tapp-multibranch-pipeline_master_web_1 ... done
+Removing tapp-multibranch-pipeline_master_web_1 ... 
+Removing tapp-multibranch-pipeline_master_web_1 ... done
+Removing network tapp-multibranch-pipeline_master_default
+Creating network "tapp-multibranch-pipeline_master_default" with the default driver
+Creating tapp-multibranch-pipeline_master_web_1 ... 
+Creating tapp-multibranch-pipeline_master_web_1 ... done
+Docker containers started successfully
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Pipeline executed successfully!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+
+GitHub has been notified of this commit’s build result
+
+Finished: SUCCESS
