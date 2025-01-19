@@ -68,6 +68,7 @@ Ensure the following are installed or configured:
   - **Development**: Code pushed to `dev` → Image pushed to `dev` repo.
   - **Production**: `dev` merged into `master` → Image pushed to `prod` repo.
   - Multibranch Jenkins pipeline ensures automatic triggers and builds based on the branch pushed to.
+  - Webhooks are configured in GitHub to automatically trigger Jenkins builds on every code push in the respective branches.
 - Build and deployment scripts:
   - `build.sh`: Automates Docker image creation.
   - `deploy.sh`: Handles deployment of the image to the server.
