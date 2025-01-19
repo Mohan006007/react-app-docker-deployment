@@ -13,14 +13,14 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    checkout([ 
+                    checkout([
                         $class: 'GitSCM',
                         branches: [[name: "*/${BRANCH_NAME}"]],
                         userRemoteConfigs: [[
                             url: "${GIT_REPO_URL}",
                             credentialsId: "${GIT_CREDENTIALS_ID}"
-                        ]]]
-                    )
+                        ]]
+                    ])
                 }
             }
         }
@@ -70,3 +70,4 @@ pipeline {
         }
     }
 }
+
