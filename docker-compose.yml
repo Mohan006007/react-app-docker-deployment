@@ -3,12 +3,8 @@ version: '3'
 services:
   web:
     image: mohan006007/dev-image:latest
-    build: .
     ports:
-      - "80:80"
-    volumes:
-      - .:/app
+      - "8084:80"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
     command: ["npm", "start"]
-
