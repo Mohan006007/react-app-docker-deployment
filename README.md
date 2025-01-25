@@ -3,18 +3,6 @@
 ## Project Overview  
 This project demonstrates a complete **CI/CD pipeline** for deploying a **React application** using **Docker**, **Jenkins**, and **AWS**. It integrates automated deployment, real-time monitoring, and alerting for effective application management.
 
----
-
-## **Live Application**
-
-You can explore the live deployment of the React application at the following URL:
-
-[**React App - Live Deployment**](http://65.2.123.191:80)
-
-Feel free to access and interact with the application in its fully deployed and functional state.
-
----
-
 ## Key Features  
 - **Fully Automated CI/CD Pipeline**: Streamlined build, test, and deployment processes with Jenkins.
 - **Scalable Containerization**: Dockerized React app using a custom `Dockerfile` and `docker-compose.yml` for easy deployment and scaling.
